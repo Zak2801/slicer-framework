@@ -1,0 +1,163 @@
+-- ====================================================================================
+-- FILE: lua\entities\sf_base_entity.lua
+-- ====================================================================================
+
+ENT.Type = "anim"
+ENT.Base = "base_gmodentity"
+ENT.PrintName = "Base"
+ENT.Author = "Zaktak"
+ENT.Spawnable = false
+ENT.AdminSpawnable = true
+ENT.Category = "ZK's Slicer Framework"
+
+ZKSlicerFramework = ZKSlicerFramework or {}
+
+function ENT:SetupDataTables()
+    self:NetworkVar("Int", 0, "Difficulty")         -- affects hack time / chance
+    self:NetworkVar("Int", 1, "HackTime")           -- total seconds to hack
+    self:NetworkVar("Bool", 0, "IsBeingHacked")
+    self:NetworkVar("Bool", 1, "IsCompleted")
+    self:NetworkVar("String", 0, "LinkedEntity")    -- optional target (for controllers)
+    self:NetworkVar("String", 1, "AllowedMinigames")
+    self:NetworkVar("String", 2, "EType")
+end
+
+function ENT:Initialize()
+    if SERVER then
+        self:SetModel("models/props_combine/breenconsole.mdl")
+        self:PhysicsInit(SOLID_VPHYSICS)
+        self:SetMoveType(MOVETYPE_VPHYSICS)
+        self:SetSolid(SOLID_VPHYSICS)
+        self:SetUseType(SIMPLE_USE)
+
+        local phys = self:GetPhysicsObject()
+        if IsValid(phys) then phys:Wake() end
+
+        self:SetDifficulty(1)
+        self:SetHackTime(0)
+        self:SetIsCompleted(false)
+        self:SetIsBeingHacked(false)
+    end
+    if CLIENT then
+        self:SetEType("Base")
+    end
+end
+
+if CLIENT then
+    function ENT:Draw(flags)
+        self:DrawModel(flags)
+
+        local ply = LocalPlayer()
+        if not IsValid(ply) then return end
+
+        if ply:GetPos():DistToSqr(self:GetPos()) > 500 * 500 then return end
+
+        local pos = self:GetPos() + Vector(0,0,35)
+
+        -- Rotate text to face the player
+        local ang = (ply:EyePos() - self:GetPos()):Angle()
+        ang:RotateAroundAxis(ang:Right(), 90)
+        ang:RotateAroundAxis(ang:Up(), 90)
+        
+        cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.08)
+
+            draw.SimpleTextOutlined(
+                string.upper("Hackable " .. self:GetEType()),
+                "ZKSlicerFramework.UI.Primary",
+                0, 0,
+                Color(255, 255, 255, 255),
+                TEXT_ALIGN_CENTER,
+                TEXT_ALIGN_TOP,
+                1,
+                Color(0, 0, 0, 255)
+            )
+
+            draw.SimpleTextOutlined(
+                string.upper(self:GetIsCompleted() and "Hacked" or "Available"),
+                "ZKSlicerFramework.UI.PrimaryItalic",
+                0, 40,
+                self:GetIsCompleted() and Color(0,255,0) or Color(255,100,0),
+                TEXT_ALIGN_CENTER,
+                TEXT_ALIGN_TOP,
+                1,
+                Color(0, 0, 0, 255)
+            )
+
+        cam.End3D2D()
+    end
+end
+
+if SERVER then
+    AddCSLuaFile()
+
+    -- Called when a player presses E on the entity
+    function ENT:Use(activator, caller)
+        if not IsValid(activator) or not activator:IsPlayer() then return end
+        if self:GetIsBeingHacked() then return end
+
+        -- Example: staff config access
+        if self:CanOpenConfig(ply) and activator:KeyDown(IN_RELOAD) then
+            self:OpenConfigMenu(activator)
+            return
+        end
+
+        -- Start hack attempt
+        self:StartHack(activator)
+    end
+
+    function ENT:CanOpenConfig(ply)
+        -- Override in derived entities if needed
+        if !IsValid(self) then return false end
+        if !IsValid(ply) then return false end
+        if !ZKSlicerFramework then return false end
+        return ZKSlicerFramework.CanConfigure(ply)
+    end
+
+    -- ==========================
+    -- HACK FLOW
+    -- ==========================
+
+    function ENT:CanHack(ply)
+        -- Override in derived entities if needed
+        if !IsValid(self) then return false end
+        if self:GetIsCompleted() then return false end
+        if !IsValid(ply) then return false end
+        local wep = ply:GetActiveWeapon():GetClass()
+        if wep ~= "wp_zks_slicer" then return false end
+        return true
+    end
+
+    function ENT:StartHack(ply)
+        if not self:CanHack(ply) then return end
+        self:SetIsBeingHacked(true)
+
+        timer.Simple(self:GetHackTime(), function()
+            if not IsValid(self) then return end
+            self:SetIsBeingHacked(false)
+            self:OnHackSuccess(ply)
+        end)
+    end
+
+    function ENT:OnHackSuccess(ply)
+        -- Override in derived entities
+        ply:ChatPrint("[HACKING] Hack complete on " .. (self.PrintName or "unknown device"))
+    end
+
+    function ENT:OnHackFailed(ply)
+        -- Override in derived entities
+        ply:ChatPrint("[HACKING] Hack failed on " .. (self.PrintName or "unknown device"))
+    end
+
+    -- Admin config (basic)
+    function ENT:OpenConfigMenu(ply)
+        --
+    end
+
+    -- Optional persistence / cleanup
+    function ENT:OnRemove()
+        if self:GetIsBeingHacked() then
+            self:SetIsBeingHacked(false)
+        end
+    end
+end
+
