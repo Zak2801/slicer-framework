@@ -76,46 +76,56 @@ Arguments
 Creating your own hackable entity is easy.
 Simply inherit from sf_base_entity:
 
+```lua
 DEFINE_BASECLASS("sf_base_entity")
 
 ENT.Type = "anim"
 ENT.Base = "sf_base_entity"
 ENT.PrintName = "My Custom Hackable"
+```
 
 ## `ENT:CanHack(ply)`
 
 Called before hacking begins.
 Return false to block the hack.
 
+```lua
 function ENT:CanHack(ply)
 if not BaseClass.CanHack(self, ply) then return false end
 return ply:IsSuperAdmin()
 end
+```
 
 ## `ENT:OnHackSuccess(ply)`
 
 Called when the hack finished successfully.
 
+```lua
 function ENT:OnHackSuccess(ply)
 print("Hack Complete!", ply)
 end
+```
 
 ## `ENT:OnHackFailed(ply)`
 
 Called when the hack fails.
 
+```lua
 function ENT:OnHackFailed(ply)
 print("Hack failed!", ply)
 end
+```
 
 ## `ENT:OpenConfigMenu(ply)`
 
 Called when an admin tries to open the config panel on the entity
 (usually reload + use or right-click in your tools)
 
+```lua
 function ENT:OpenConfigMenu(ply)
 -- open your custom VGUI
 end
+```
 
 # Network Messages
 
@@ -126,15 +136,18 @@ ZKSF.OpenHackInterface Opens the hacking UI
 ZKSF.OpenConfigInterface Opens the admin config UI
 
 Example:
-
+```lua
 net.Start(ZKSlicerFramework.NetUtils.OpenHackInterface)
 net.WriteEntity(self)
 net.Send(ply)
+```
 
 # Permission API
 
 Check whether a player can configure Slicer entities:
 
+```lua
 if ZKSlicerFramework.CanConfigure(ply) then
 -- allow configuration
 end
+```
