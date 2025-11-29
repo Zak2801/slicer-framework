@@ -1,0 +1,23 @@
+Slicer Framework — Server Use License
+Copyright (c) 2025 Zaktak
+All rights reserved.
+
+Permission is hereby granted to any individual or organization to download,
+install, and modify this software for use on their own Garry's Mod server(s).
+
+You are NOT permitted to:
+- Redistribute modified versions of this software.
+- Publish or upload the software or modified versions to any public service,
+  including but not limited to: GitHub, GitLab, Steam Workshop, Discord,
+  leak forums, game content sites, or file hosting websites.
+- Sell, sublicense, or otherwise commercially distribute the software.
+
+You ARE permitted to:
+- Modify the software for personal or server use.
+- Share unmodified copies ONLY if the original license and attribution are
+  included and no fee is charged.
+
+The software is provided “as-is” without warranty of any kind. The author
+is not liable for any damages arising from the use of the software.
+
+By using this software, you agree to the terms above.

@@ -87,7 +87,7 @@ if SERVER then
                 datapad:Spawn()
                 datapad:Activate()
                 ply:ChatPrint("[CONSOLE] You have received a datapad!")
-                hook.Run("ZKSF_HackSuccess", self, ply, datapad)
+                hook.Run("ZKSF_HackSuccess", self, ply, {datapad})
                 return
             end
         end
