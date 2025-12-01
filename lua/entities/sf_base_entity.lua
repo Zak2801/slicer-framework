@@ -17,6 +17,7 @@ function ENT:SetupDataTables()
     self:NetworkVar("Int", 1, "HackTime")           -- total seconds to hack
     self:NetworkVar("Bool", 0, "IsBeingHacked")
     self:NetworkVar("Bool", 1, "IsCompleted")
+    self:NetworkVar("Bool", 2, "IsDisabled")
     self:NetworkVar("String", 0, "LinkedEntity")    -- optional target (for controllers)
     self:NetworkVar("String", 1, "AllowedMinigames")
     self:NetworkVar("String", 2, "EType")
@@ -37,6 +38,7 @@ function ENT:Initialize()
         self:SetHackTime(0)
         self:SetIsCompleted(false)
         self:SetIsBeingHacked(false)
+        self:SetIsDisabled(false)
     end
     if CLIENT then
         self:SetEType("Base")
@@ -72,11 +74,24 @@ if CLIENT then
                 Color(0, 0, 0, 255)
             )
 
+            local txt = "Available"
+            local col = Color(255,100,0)
+            if self:GetIsCompleted() then
+                txt = "Hacked"
+                col = Color(0,255,0)
+            elseif self:GetIsBeingHacked() then 
+                txt = "Unavailable" 
+                col = Color(255,50,0)
+            elseif self:GetIsDisabled() then 
+                txt = "Locked" 
+                col = Color(0,50,250)
+            end
+
             draw.SimpleTextOutlined(
-                string.upper(self:GetIsCompleted() and "Hacked" or "Available"),
+                string.upper(txt),
                 "ZKSlicerFramework.UI.PrimaryItalic",
                 0, 40,
-                self:GetIsCompleted() and Color(0,255,0) or Color(255,100,0),
+                col,
                 TEXT_ALIGN_CENTER,
                 TEXT_ALIGN_TOP,
                 1,
@@ -120,7 +135,9 @@ if SERVER then
     function ENT:CanHack(ply)
         -- Override in derived entities if needed
         if !IsValid(self) then return false end
+        if self:GetIsBeingHacked() then return false end
         if self:GetIsCompleted() then return false end
+        if self:GetIsDisabled() then return false end
         if !IsValid(ply) then return false end
         local wep = ply:GetActiveWeapon():GetClass()
         if wep ~= "wp_zks_slicer" then return false end

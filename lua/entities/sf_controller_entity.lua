@@ -80,7 +80,9 @@ if SERVER then
 
     function ENT:CanHack(ply)
         if !IsValid(self) then return false end
+        if self:GetIsBeingHacked() then return false end
         if self:GetIsCompleted() then return false end
+        if self:GetIsDisabled() then return false end
         if !IsValid(ply) then return false end
         local wep = ply:GetActiveWeapon():GetClass()
         if wep ~= "wp_zks_slicer" then return false end
@@ -100,7 +102,12 @@ if SERVER then
         for _, ent in ipairs(ents.GetAll()) do
             if table.HasValue(linkedEnts, ent:GetCreationID()) then
                 if IsValid(ent) then
-                    ent:Remove()
+                    -- If the entity is a hackable entity, let's allow it to be hacked now.
+                    if ent.BaseClass and ent.BaseClass.ClassName == "sf_base_entity" then
+                        ent:SetIsDisabled(false)
+                    else
+                        ent:Remove()
+                    end
                 end
                 table.remove(linkedEnts, table.KeyFromValue(linkedEnts, ent:GetCreationID()))
             end

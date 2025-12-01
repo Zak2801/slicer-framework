@@ -129,6 +129,9 @@ function TOOL:RightClick(trace)
 
     if idx then
         -- unlink
+        if IsController(ent) then
+            ent:SetIsDisabled(false)
+        end
         table.remove(linked, idx)
         if CLIENT then
             notification.AddLegacy("Unlinked entity: " .. tostring(ent:GetClass()), NOTIFY_ERROR, 2)
@@ -136,6 +139,9 @@ function TOOL:RightClick(trace)
         end
     else
         -- link
+        if IsController(ent) then
+            ent:SetIsDisabled(true)
+        end
         table.insert(linked, ent:GetCreationID())
         if CLIENT then
             notification.AddLegacy("Linked entity: " .. tostring(ent:GetClass()), NOTIFY_HINT, 2)
