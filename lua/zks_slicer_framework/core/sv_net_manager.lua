@@ -58,7 +58,8 @@ net.Receive(ZKSlicerFramework.NetUtils.SyncEntConfig, function(_, ply)
     ent:SetDifficulty(diffi)
     ent:SetHackTime(hackTime)
 
-    if ent:GetEmitDatapad() ~= nil then
+    local succ, err = pcall(function() ent:GetEmitDatapad() end)
+    if succ then
         ent:SetEmitDatapad(shouldEmitDatapad and 1 or 0)
     end
     
