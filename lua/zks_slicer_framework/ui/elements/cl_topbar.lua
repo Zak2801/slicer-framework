@@ -1,7 +1,16 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\ui\elements\cl_topbar.lua
+  CLIENT
+  Custom window title bar
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
 local width = 4
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetTall(36)
     self:Dock(TOP)
@@ -35,14 +44,27 @@ function PANEL:Init()
     end
 end
 
+-----------------------------------------------------------------------------
+-- Set the title
+-- @param txt string Title
+-----------------------------------------------------------------------------
 function PANEL:SetTitle(txt)
     self.title = txt
 end
 
+-----------------------------------------------------------------------------
+-- Set close callback
+-- @param fn function Callback
+-----------------------------------------------------------------------------
 function PANEL:SetCloseFunc(fn)
     self.OnClose = fn
 end
 
+-----------------------------------------------------------------------------
+-- Paint the top bar
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     -- Draw top subtle highlight
     surface.SetDrawColor(self.highlightColor)

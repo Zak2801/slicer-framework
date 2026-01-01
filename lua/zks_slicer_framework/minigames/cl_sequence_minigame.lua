@@ -1,3 +1,9 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\minigames\cl_sequence_minigame.lua
+  CLIENT
+  Sequence memory/reaction minigame
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
 local arrowIcons = {
@@ -19,6 +25,9 @@ local keyMap = {
     [KEY_RIGHT] = "right"
 }
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetKeyboardInputEnabled(true)
     self:SetMouseInputEnabled(false)
@@ -33,15 +42,34 @@ function PANEL:Init()
     self.Label:DockMargin(0, 4, 0, 0)
 end
 
+-----------------------------------------------------------------------------
+-- Set the parent frame
+-- @param frame Panel The parent hacking frame
+-----------------------------------------------------------------------------
+function PANEL:SetParentFrame(frame)
+    self.ParentFrame = frame
+end
 
-function PANEL:SetParentFrame(frame) self.ParentFrame = frame end
-
+-----------------------------------------------------------------------------
+-- Set the hack time limit
+-- @param t number Time in seconds
+-----------------------------------------------------------------------------
 function PANEL:SetHackTime(t)
     self.hackTime = math.max(0, t)
 end
 
-function PANEL:SetEntity(ent) self.ent = ent end
+-----------------------------------------------------------------------------
+-- Set the target entity
+-- @param ent Entity The hackable entity
+-----------------------------------------------------------------------------
+function PANEL:SetEntity(ent)
+    self.ent = ent
+end
 
+-----------------------------------------------------------------------------
+-- Set the difficulty level and generate sequences
+-- @param d number Difficulty level
+-----------------------------------------------------------------------------
 function PANEL:SetDifficulty(d) 
     self.difficulty = d 
     local difficulty = self.difficulty or 1
@@ -72,10 +100,18 @@ function PANEL:SetDifficulty(d)
     end
 end
 
+-----------------------------------------------------------------------------
+-- Get the current active node
+-- @return table Node data
+-----------------------------------------------------------------------------
 function PANEL:GetCurrentNode()
     return self.Nodes[self.CurrentNode]
 end
 
+-----------------------------------------------------------------------------
+-- Handle key presses
+-- @param key number Key code
+-----------------------------------------------------------------------------
 function PANEL:OnKeyCodePressed(key)
     if self.Completed or self.ResultReported then return end
     local node = self:GetCurrentNode()
@@ -102,19 +138,13 @@ function PANEL:OnKeyCodePressed(key)
                 local popup = vgui.Create("HackPopup")
                 popup:SetHeaderTitle("WELL DONE!")
                 popup:SetText("You followed each sequence correctly.")
-                popup.OnClose = function() 
-                    if self.ReportResult then
-                        self:ReportResult(true)
-                        self.ResultReported = true
-                    end    
-                end
                 popup:SetAcceptButton("Continue", function()
                     if self.ReportResult then
                         self:ReportResult(true)
                         self.ResultReported = true
                     end
                 end)
-                popup.DeclineButton:Remove()
+                if popup.DeclineButton then popup.DeclineButton:Remove() end
                 return
             end
         end
@@ -133,8 +163,16 @@ function PANEL:OnKeyCodePressed(key)
     end
 end
 
+-----------------------------------------------------------------------------
+-- Helper to draw a filled circle
+-- @param x number X coordinate
+-- @param y number Y coordinate
+-- @param radius number Circle radius
+-- @param color Color Circle color
+-- @param segments number Number of segments (optional)
+-----------------------------------------------------------------------------
 local function DrawCircleFilled(x, y, radius, color, segments)
-    seg = segments or 32
+    local seg = segments or 32
     local cir = {}
 
 	table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
@@ -149,6 +187,11 @@ local function DrawCircleFilled(x, y, radius, color, segments)
 	surface.DrawPoly( cir )
 end
 
+-----------------------------------------------------------------------------
+-- Paint the minigame
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     local size = w * 0.05
     local padding = size * 1.5
@@ -165,7 +208,7 @@ function PANEL:Paint(w, h)
 
     -- Calculate positions first
     for i = 1, self.TotalNodes do
-        local node = self.Nodes[i]
+        -- local node = self.Nodes[i] -- Unused
         local x = padding + (i - 1) * spacing
         local y = baseY + ((i % 2 == 0) and -verticalOffset or verticalOffset)
         positions[i] = { x = x, y = y }
@@ -223,8 +266,5 @@ function PANEL:Paint(w, h)
         end
     end
 end
-
-
-
 
 vgui.Register("HackMinigame_sequence", PANEL, "DPanel")

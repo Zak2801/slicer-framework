@@ -1,6 +1,8 @@
--- ====================================================================================
--- FILE: lua\entities\sf_controller_entity.lua
--- ====================================================================================
+--[[-------------------------------------------------------------------------
+  lua\entities\sf_controller_entity.lua
+  SHARED
+  Controller entity that manages linked entities and triggers the hack
+---------------------------------------------------------------------------]]
 
 ENT.Type = "anim"
 ENT.Base = "sf_base_entity"
@@ -10,7 +12,9 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Category = "ZK's Slicer Framework"
 
-
+-----------------------------------------------------------------------------
+-- Initialize the entity
+-----------------------------------------------------------------------------
 function ENT:Initialize()
     self.BaseClass.Initialize(self)
 
@@ -33,6 +37,11 @@ function ENT:Initialize()
     self:SetEType("Controller")
 end
 
+-----------------------------------------------------------------------------
+-- Helper to parse linked entities from JSON
+-- @param ent Entity The controller entity
+-- @return table List of CreationIDs
+-----------------------------------------------------------------------------
 local function GetLinkedEntities(ent)
     local data = ent:GetLinkedEntity() and ent:GetLinkedEntity() or "[]"
     local ok, tbl = pcall(util.JSONToTable, data)
@@ -43,11 +52,15 @@ end
 if SERVER then
     AddCSLuaFile()
 
+    -----------------------------------------------------------------------------
     -- Called when a player presses E on the entity
+    -- @param activator Entity The entity activating it (player)
+    -- @param caller Entity The entity calling the use
+    -----------------------------------------------------------------------------
     function ENT:Use(activator, caller)
         if not IsValid(activator) or not activator:IsPlayer() then return end
 
-        if self:CanOpenConfig(activator) and !self:CanHack(activator) then --  and activator:KeyDown(IN_RELOAD)?
+        if self:CanOpenConfig(activator) and not self:CanHack(activator) then
             self:OpenConfigMenu(activator)
             return
         end
@@ -60,61 +73,82 @@ if SERVER then
     -- ==========================
     -- HACK FLOW
     -- ==========================
+    
+    -----------------------------------------------------------------------------
+    -- Starts the hacking process
+    -- @param ply Player The player starting the hack
+    -----------------------------------------------------------------------------
     function ENT:StartHack(ply)
         if not self:CanHack(ply) then return end
-        self:SetIsBeingHacked(true)
+        self.BaseClass.StartHack(self, ply) -- Call base to set state and time
 
         net.Start(ZKSlicerFramework.NetUtils.OpenHackInterface)
         net.WriteEntity(self)
         net.Send(ply)
 
         hook.Run("ZKSF_StartHack", self, ply)
-
-        -- Are we timed here?
-        if self:GetHackTime() > 0 then
-            timer.Simple(self:GetHackTime(), function() -- TODO: Is there any use for this?
-                if not IsValid(self) then return end
-            end)
-        end
     end
 
+    -----------------------------------------------------------------------------
+    -- Checks if the entity can be hacked
+    -- @param ply Player The player attempting the hack
+    -- @return boolean
+    -----------------------------------------------------------------------------
     function ENT:CanHack(ply)
-        if !IsValid(self) then return false end
+        if not IsValid(self) then return false end
         if self:GetIsBeingHacked() then return false end
         if self:GetIsCompleted() then return false end
         if self:GetIsDisabled() then return false end
-        if !IsValid(ply) then return false end
+        if not IsValid(ply) then return false end
         local wep = ply:GetActiveWeapon():GetClass()
         if wep ~= "wp_zks_slicer" then return false end
 
         local linkedEnts = self:GetLinkedEntity()
-        if !linkedEnts then return end
+        if not linkedEnts then return end
         return true
     end
 
+    -----------------------------------------------------------------------------
+    -- Called when the hack is successful
+    -- @param ply Player The player who succeeded
+    -----------------------------------------------------------------------------
     function ENT:OnHackSuccess(ply)
         self:SetIsBeingHacked(false)
         self:SetIsCompleted(true)
         local linkedEnts = GetLinkedEntities(self)
+        local remaining = #linkedEnts
 
         hook.Run("ZKSF_HackSuccess", self, ply, linkedEnts)
 
-        for _, ent in ipairs(ents.GetAll()) do
-            if table.HasValue(linkedEnts, ent:GetCreationID()) then
-                if IsValid(ent) then
-                    -- If the entity is a hackable entity, let's allow it to be hacked now.
-                    if ent.BaseClass and ent.BaseClass.ClassName == "sf_base_entity" then
-                        ent:SetIsDisabled(false)
-                    else
-                        ent:Remove()
+        -- Optimized lookup: Stop once we find all linked entities
+        if remaining > 0 then
+            local toFind = {}
+            for _, id in ipairs(linkedEnts) do toFind[id] = true end
+
+            for _, ent in ipairs(ents.GetAll()) do
+                local id = ent:GetCreationID()
+                if toFind[id] then
+                    if IsValid(ent) then
+                        if ent.BaseClass and ent.BaseClass.ClassName == "sf_base_entity" then
+                            ent:SetIsDisabled(false)
+                        else
+                            ent:Remove()
+                        end
                     end
+                    toFind[id] = nil
+                    remaining = remaining - 1
+                    if remaining <= 0 then break end
                 end
-                table.remove(linkedEnts, table.KeyFromValue(linkedEnts, ent:GetCreationID()))
             end
         end
+
         ply:ChatPrint("[HACKING] Hack complete on " .. (self.PrintName or "unknown device"))
     end
 
+    -----------------------------------------------------------------------------
+    -- Called when the hack fails
+    -- @param ply Player The player who failed
+    -----------------------------------------------------------------------------
     function ENT:OnHackFailed(ply)
         self:SetIsBeingHacked(false)
         self:SetIsCompleted(false)
@@ -123,7 +157,10 @@ if SERVER then
         ply:ChatPrint("[HACKING] Hack failed on " .. (self.PrintName or "unknown device"))
     end
 
-    -- Admin config (basic)
+    -----------------------------------------------------------------------------
+    -- Opens the configuration menu
+    -- @param ply Player The admin player
+    -----------------------------------------------------------------------------
     function ENT:OpenConfigMenu(ply)
         net.Start(ZKSlicerFramework.NetUtils.OpenConfigInterface)
         net.WriteEntity(self)

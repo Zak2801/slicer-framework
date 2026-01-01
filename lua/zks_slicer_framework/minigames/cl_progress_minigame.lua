@@ -1,5 +1,14 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\minigames\cl_progress_minigame.lua
+  CLIENT
+  Simple progress bar minigame (wait to hack)
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self.Progress = 0
     self.StartTime = CurTime()
@@ -10,10 +19,39 @@ function PANEL:Init()
     self.Label:SetContentAlignment(5)
 end
 
-function PANEL:SetParentFrame(frame) self.ParentFrame = frame end
-function PANEL:SetHackTime(t) self.hackTime = t end
-function PANEL:SetEntity(ent) self.ent = ent end
+-----------------------------------------------------------------------------
+-- Set the parent frame
+-- @param frame Panel The parent hacking frame
+-----------------------------------------------------------------------------
+function PANEL:SetParentFrame(frame)
+    self.ParentFrame = frame
+end
 
+-----------------------------------------------------------------------------
+-- Set the hack time limit
+-- @param t number Time in seconds
+-----------------------------------------------------------------------------
+function PANEL:SetHackTime(t)
+    self.hackTime = t
+    -- Adjust EndTime if hackTime is provided, though Init sets a default 5s
+    if t then
+        self.EndTime = self.StartTime + t
+    end
+end
+
+-----------------------------------------------------------------------------
+-- Set the target entity
+-- @param ent Entity The hackable entity
+-----------------------------------------------------------------------------
+function PANEL:SetEntity(ent)
+    self.ent = ent
+end
+
+-----------------------------------------------------------------------------
+-- Paint the minigame
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     surface.SetDrawColor(40, 40, 40, 255)
     surface.DrawRect(0, h - 40, w, 30)
@@ -24,7 +62,7 @@ function PANEL:Paint(w, h)
 
     if frac >= 1 and not self.Finished then
         self.Finished = true
-        -- Randomize failure chance based on difficulty?
+        -- Randomize failure chance based on difficulty? (Currently hardcoded)
         local success = math.random() > 0.2
         self:ReportResult(success)
     end

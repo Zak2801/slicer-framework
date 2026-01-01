@@ -1,5 +1,14 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\ui\elements\cl_checkbox.lua
+  CLIENT
+  Custom checkbox element
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetTall(32)
     self:DockMargin(10, 10, 10, 0)
@@ -21,6 +30,11 @@ end
 -- =========================================================
 -- Setters
 -- =========================================================
+
+-----------------------------------------------------------------------------
+-- Set checked state
+-- @param b boolean Checked state
+-----------------------------------------------------------------------------
 function PANEL:SetChecked(b)
     b = tobool(b)
     if b ~= self.Checked then
@@ -29,21 +43,37 @@ function PANEL:SetChecked(b)
     end
 end
 
+-----------------------------------------------------------------------------
+-- Get checked state
+-- @return boolean Checked state
+-----------------------------------------------------------------------------
 function PANEL:GetChecked()
     return self.Checked
 end
 
+-----------------------------------------------------------------------------
+-- Set label text
+-- @param t string Text
+-----------------------------------------------------------------------------
 function PANEL:SetText(t)
     self.LabelText = t
 end
 
--- Override in parent
+-----------------------------------------------------------------------------
+-- Called when value changes (Override)
+-- @param val boolean New value
+-----------------------------------------------------------------------------
 function PANEL:OnValueChanged(val)
 end
 
 -- =========================================================
 -- Input
 -- =========================================================
+
+-----------------------------------------------------------------------------
+-- Handle mouse press
+-- @param mc number Mouse code
+-----------------------------------------------------------------------------
 function PANEL:OnMousePressed(mc)
     if mc ~= MOUSE_LEFT then return end
 
@@ -58,6 +88,9 @@ function PANEL:OnMousePressed(mc)
     self:OnValueChanged(self.Checked)
 end
 
+-----------------------------------------------------------------------------
+-- Think loop for animations
+-----------------------------------------------------------------------------
 function PANEL:Think()
     if self:IsHovered() then
         self.HoverLerp = Lerp(FrameTime() * 10, self.HoverLerp, 1)
@@ -69,6 +102,12 @@ end
 -- =========================================================
 -- Paint
 -- =========================================================
+
+-----------------------------------------------------------------------------
+-- Paint the checkbox
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     local boxSize = h * 0.75
     local boxX    = 10

@@ -1,5 +1,14 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\ui\elements\cl_numslider.lua
+  CLIENT
+  Custom number slider element
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetTall(48)
     self:DockMargin(10, 10, 10, 0)
@@ -24,29 +33,71 @@ end
 -- ──────────────────────────────
 -- Setters
 -- ──────────────────────────────
+
+-----------------------------------------------------------------------------
+-- Set minimum value
+-- @param val number
+-----------------------------------------------------------------------------
 function PANEL:SetMin(val) self.Min = val end
+
+-----------------------------------------------------------------------------
+-- Set maximum value
+-- @param val number
+-----------------------------------------------------------------------------
 function PANEL:SetMax(val) self.Max = val end
+
+-----------------------------------------------------------------------------
+-- Set decimal places
+-- @param val number
+-----------------------------------------------------------------------------
 function PANEL:SetDecimals(val) self.Decimals = val end
+
+-----------------------------------------------------------------------------
+-- Set current value
+-- @param val number
+-----------------------------------------------------------------------------
 function PANEL:SetValue(val)
     self.Value = math.Clamp(val, self.Min, self.Max)
 end
+
+-----------------------------------------------------------------------------
+-- Set label text
+-- @param txt string
+-----------------------------------------------------------------------------
 function PANEL:SetText(txt) self.LabelText = txt end
 
 -- ──────────────────────────────
 -- Value Handling
 -- ──────────────────────────────
+
+-----------------------------------------------------------------------------
+-- Get fraction (0-1)
+-- @return number
+-----------------------------------------------------------------------------
 function PANEL:GetFraction()
     return (self.Value - self.Min) / (self.Max - self.Min)
 end
 
+-----------------------------------------------------------------------------
+-- Get current value
+-- @return number
+-----------------------------------------------------------------------------
 function PANEL:GetValue()
     return self.Value
 end
 
+-----------------------------------------------------------------------------
+-- Set value by fraction
+-- @param frac number
+-----------------------------------------------------------------------------
 function PANEL:SetFraction(frac)
     self:SetValue(self.Min + frac * (self.Max - self.Min))
 end
 
+-----------------------------------------------------------------------------
+-- Called when value changes
+-- @param val number
+-----------------------------------------------------------------------------
 function PANEL:OnValueChanged(val)
     -- override in parent
 end
@@ -54,17 +105,27 @@ end
 -- ──────────────────────────────
 -- Input
 -- ──────────────────────────────
+
+-----------------------------------------------------------------------------
+-- Handle mouse press
+-----------------------------------------------------------------------------
 function PANEL:OnMousePressed()
     self:MouseCapture(true)
     self.Dragging = true
     surface.PlaySound("ui/buttonclickrelease.wav")
 end
 
+-----------------------------------------------------------------------------
+-- Handle mouse release
+-----------------------------------------------------------------------------
 function PANEL:OnMouseReleased()
     self:MouseCapture(false)
     self.Dragging = false
 end
 
+-----------------------------------------------------------------------------
+-- Think loop for dragging and animations
+-----------------------------------------------------------------------------
 function PANEL:Think()
     if self:IsHovered() then
         self.HoverLerp = Lerp(FrameTime() * 10, self.HoverLerp, 1)
@@ -94,6 +155,12 @@ end
 -- ──────────────────────────────
 -- Paint
 -- ──────────────────────────────
+
+-----------------------------------------------------------------------------
+-- Paint the slider
+-- @param w number
+-- @param h number
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     local textMargin = 20
     local valMargin = 20

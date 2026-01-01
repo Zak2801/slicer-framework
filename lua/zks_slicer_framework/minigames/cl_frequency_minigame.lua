@@ -1,7 +1,16 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\minigames\cl_frequency_minigame.lua
+  CLIENT
+  Frequency matching minigame where users align waves
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
 local points = 60
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetKeyboardInputEnabled(true)
     self:SetMouseInputEnabled(true)
@@ -46,11 +55,44 @@ function PANEL:Init()
     self.Completed = false
 end
 
-function PANEL:SetParentFrame(frame) self.ParentFrame = frame end
-function PANEL:SetHackTime(t) self.hackTime = math.max(0, t) end
-function PANEL:SetEntity(ent) self.ent = ent end
-function PANEL:SetDifficulty(d) self.difficulty = d end
+-----------------------------------------------------------------------------
+-- Set the parent frame
+-- @param frame Panel The parent hacking frame
+-----------------------------------------------------------------------------
+function PANEL:SetParentFrame(frame)
+    self.ParentFrame = frame
+end
 
+-----------------------------------------------------------------------------
+-- Set the hack time limit
+-- @param t number Time in seconds
+-----------------------------------------------------------------------------
+function PANEL:SetHackTime(t)
+    self.hackTime = math.max(0, t)
+end
+
+-----------------------------------------------------------------------------
+-- Set the target entity
+-- @param ent Entity The hackable entity
+-----------------------------------------------------------------------------
+function PANEL:SetEntity(ent)
+    self.ent = ent
+end
+
+-----------------------------------------------------------------------------
+-- Set the difficulty level
+-- @param d number Difficulty level
+-----------------------------------------------------------------------------
+function PANEL:SetDifficulty(d)
+    self.difficulty = d
+end
+
+-----------------------------------------------------------------------------
+-- Calculate the match percentage between two waves
+-- @param target table Target wave parameters
+-- @param player table Player wave parameters
+-- @return number Match percentage (0-1)
+-----------------------------------------------------------------------------
 local function CalculateMatch(target, player)
     local totalDiff = 0
     for i = 1, points do
@@ -63,6 +105,9 @@ local function CalculateMatch(target, player)
     return math.Clamp(1 - totalDiff / maxDiff, 0, 1)
 end
 
+-----------------------------------------------------------------------------
+-- Main think loop
+-----------------------------------------------------------------------------
 function PANEL:Think()
     if self.Completed then return end
     self.PlayerWave.frequency = self.FreqSlider:GetValue()
@@ -79,35 +124,41 @@ function PANEL:Think()
         local popup = vgui.Create("HackPopup")
         popup:SetHeaderTitle("WELL DONE!")
         popup:SetText("You have successfully aligned the signal.")
-        popup.OnClose = function() 
-            if self.ReportResult then
-                self:ReportResult(true)
-            end    
-        end
         popup:SetAcceptButton("Continue", function()
             if self.ReportResult then
                 self:ReportResult(true)
             end
         end)
-        popup.DeclineButton:Remove()
+        if popup.DeclineButton then popup.DeclineButton:Remove() end
     end
 end
 
-function PANEL:Paint(w, h)
-    -- Draw waves
-    local function DrawWave(wave, color, yOffset)
-        surface.SetDrawColor(color)
-        for i = 1, points-1 do
-            local x1 = (i-1)/points * w
-            local y1 = yOffset - wave.amplitude * math.sin(wave.frequency * (i-1)/points * 2*math.pi + wave.phase)
-            local x2 = i/points * w
-            local y2 = yOffset - wave.amplitude * math.sin(wave.frequency * i/points * 2*math.pi + wave.phase)
-            surface.DrawLine(x1, y1, x2, y2)
-        end
+-----------------------------------------------------------------------------
+-- Helper to draw a sine wave
+-- @param wave table Wave parameters
+-- @param color Color Line color
+-- @param yOffset number Y offset
+-- @param w number Width
+-----------------------------------------------------------------------------
+local function DrawWave(wave, color, yOffset, w)
+    surface.SetDrawColor(color)
+    for i = 1, points-1 do
+        local x1 = (i-1)/points * w
+        local y1 = yOffset - wave.amplitude * math.sin(wave.frequency * (i-1)/points * 2*math.pi + wave.phase)
+        local x2 = i/points * w
+        local y2 = yOffset - wave.amplitude * math.sin(wave.frequency * i/points * 2*math.pi + wave.phase)
+        surface.DrawLine(x1, y1, x2, y2)
     end
+end
 
-    DrawWave(self.TargetWave, Color(200,50,50,255), h*0.5)
-    DrawWave(self.PlayerWave, Color(50,200,50,255), h*0.8)
+-----------------------------------------------------------------------------
+-- Paint the minigame
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
+function PANEL:Paint(w, h)
+    DrawWave(self.TargetWave, Color(200,50,50,255), h*0.5, w)
+    DrawWave(self.PlayerWave, Color(50,200,50,255), h*0.8, w)
 
     -- Draw progress bar
     draw.RoundedBox(4, w*0.1, h*0.95, w*0.8, 20, Color(50,50,50,255))

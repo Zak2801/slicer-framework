@@ -1,3 +1,9 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\minigames\cl_cipher_minigame.lua
+  CLIENT
+  Cipher minigame panel where users decode shifted text
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
 local wordPool = {
@@ -5,7 +11,12 @@ local wordPool = {
     "ion","core","data","signal","pulse","system","shift","input"
 }
 
--- Utility: shift a character backwards by "shift" for decoding
+-----------------------------------------------------------------------------
+-- Shifts a character backwards by "shift" for decoding
+-- @param ch string Character to shift
+-- @param shift number Amount to shift
+-- @return string Shifted character
+-----------------------------------------------------------------------------
 local function ShiftChar(ch, shift)
     local byte = string.byte(ch)
     if byte >= string.byte("a") and byte <= string.byte("z") then
@@ -14,7 +25,12 @@ local function ShiftChar(ch, shift)
     return ch
 end
 
+-----------------------------------------------------------------------------
 -- Decode an entire word using shift
+-- @param encoded string The encoded word
+-- @param shift number The shift amount
+-- @return string Decoded word
+-----------------------------------------------------------------------------
 local function DecodeWord(encoded, shift)
     local decoded = ""
     for i = 1, #encoded do
@@ -23,6 +39,9 @@ local function DecodeWord(encoded, shift)
     return decoded
 end
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetKeyboardInputEnabled(true)
     self:SetMouseInputEnabled(false)
@@ -47,18 +66,34 @@ function PANEL:Init()
     self.Label:DockMargin(0, 6, 0, 6)
 end
 
+-----------------------------------------------------------------------------
+-- Set the parent frame
+-- @param frame Panel The parent hacking frame
+-----------------------------------------------------------------------------
 function PANEL:SetParentFrame(frame)
     self.ParentFrame = frame
 end
 
+-----------------------------------------------------------------------------
+-- Set the hack time limit
+-- @param t number Time in seconds
+-----------------------------------------------------------------------------
 function PANEL:SetHackTime(t)
     self.hackTime = t
 end
 
+-----------------------------------------------------------------------------
+-- Set the target entity
+-- @param ent Entity The hackable entity
+-----------------------------------------------------------------------------
 function PANEL:SetEntity(ent)
     self.ent = ent
 end
 
+-----------------------------------------------------------------------------
+-- Set the difficulty level and generate the puzzle
+-- @param d number Difficulty level
+-----------------------------------------------------------------------------
 function PANEL:SetDifficulty(d)
     self.difficulty = d or 1
     local minLen = math.Clamp(3 + d, 4, 10)
@@ -73,7 +108,10 @@ function PANEL:SetDifficulty(d)
     self.Encoded = DecodeWord(self.Word, self.Shift) -- encoded by shifting backwards
 end
 
--- Handle keystrokes
+-----------------------------------------------------------------------------
+-- Handle key presses
+-- @param key number Key code
+-----------------------------------------------------------------------------
 function PANEL:OnKeyCodePressed(key)
     if self.Completed or self.ResultReported then return end
 
@@ -93,6 +131,9 @@ function PANEL:OnKeyCodePressed(key)
     end
 end
 
+-----------------------------------------------------------------------------
+-- Validate the user's input
+-----------------------------------------------------------------------------
 function PANEL:CheckSubmission()
     if self.InputText == self.Word then
         self.Completed = true
@@ -114,11 +155,23 @@ function PANEL:CheckSubmission()
     end
 end
 
--- Drawing
+-----------------------------------------------------------------------------
+-- Helper to draw centered text
+-- @param text string Text to draw
+-- @param font string Font name
+-- @param x number X coordinate
+-- @param y number Y coordinate
+-- @param col Color Text color
+-----------------------------------------------------------------------------
 local function DrawCenteredText(text, font, x, y, col)
     draw.SimpleText(text, font, x, y, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
+-----------------------------------------------------------------------------
+-- Paint the minigame
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w,h)
     surface.SetDrawColor(25,40,60,200)
     surface.DrawRect(0,0,w,h)

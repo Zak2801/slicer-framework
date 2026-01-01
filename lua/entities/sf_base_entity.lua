@@ -1,6 +1,8 @@
--- ====================================================================================
--- FILE: lua\entities\sf_base_entity.lua
--- ====================================================================================
+--[[-------------------------------------------------------------------------
+  lua\entities\sf_base_entity.lua
+  SHARED
+  Base entity for all hackable devices in the framework
+---------------------------------------------------------------------------]]
 
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
@@ -111,7 +113,7 @@ if SERVER then
         if self:GetIsBeingHacked() then return end
 
         -- Example: staff config access
-        if self:CanOpenConfig(ply) and activator:KeyDown(IN_RELOAD) then
+        if self:CanOpenConfig(activator) and activator:KeyDown(IN_RELOAD) then
             self:OpenConfigMenu(activator)
             return
         end
@@ -120,11 +122,16 @@ if SERVER then
         self:StartHack(activator)
     end
 
+    -----------------------------------------------------------------------------
+    -- Checks if a player can open the configuration menu
+    -- @param ply Player The player to check
+    -- @return boolean Returns true if allowed
+    -----------------------------------------------------------------------------
     function ENT:CanOpenConfig(ply)
         -- Override in derived entities if needed
-        if !IsValid(self) then return false end
-        if !IsValid(ply) then return false end
-        if !ZKSlicerFramework then return false end
+        if not IsValid(self) then return false end
+        if not IsValid(ply) then return false end
+        if not ZKSlicerFramework then return false end
         return ZKSlicerFramework.CanConfigure(ply)
     end
 
@@ -132,34 +139,49 @@ if SERVER then
     -- HACK FLOW
     -- ==========================
 
+    -----------------------------------------------------------------------------
+    -- Checks if a player can hack this entity
+    -- @param ply Player The player attempting to hack
+    -- @return boolean Returns true if hackable
+    -----------------------------------------------------------------------------
     function ENT:CanHack(ply)
         -- Override in derived entities if needed
-        if !IsValid(self) then return false end
+        if not IsValid(self) then return false end
         if self:GetIsBeingHacked() then return false end
         if self:GetIsCompleted() then return false end
         if self:GetIsDisabled() then return false end
-        if !IsValid(ply) then return false end
+        if not IsValid(ply) then return false end
         local wep = ply:GetActiveWeapon():GetClass()
         if wep ~= "wp_zks_slicer" then return false end
         return true
     end
 
+    -----------------------------------------------------------------------------
+    -- Starts the hacking process
+    -- @param ply Player The player starting the hack
+    -- @return nil
+    -----------------------------------------------------------------------------
     function ENT:StartHack(ply)
         if not self:CanHack(ply) then return end
         self:SetIsBeingHacked(true)
-
-        timer.Simple(self:GetHackTime(), function()
-            if not IsValid(self) then return end
-            self:SetIsBeingHacked(false)
-            self:OnHackSuccess(ply)
-        end)
+        self.HackStartTime = CurTime()
     end
 
+    -----------------------------------------------------------------------------
+    -- Called when a hack is successfully completed
+    -- @param ply Player The player who completed the hack
+    -- @return nil
+    -----------------------------------------------------------------------------
     function ENT:OnHackSuccess(ply)
         -- Override in derived entities
         ply:ChatPrint("[HACKING] Hack complete on " .. (self.PrintName or "unknown device"))
     end
 
+    -----------------------------------------------------------------------------
+    -- Called when a hack fails
+    -- @param ply Player The player who failed the hack
+    -- @return nil
+    -----------------------------------------------------------------------------
     function ENT:OnHackFailed(ply)
         -- Override in derived entities
         ply:ChatPrint("[HACKING] Hack failed on " .. (self.PrintName or "unknown device"))
@@ -177,4 +199,3 @@ if SERVER then
         end
     end
 end
-

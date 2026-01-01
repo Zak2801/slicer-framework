@@ -1,6 +1,14 @@
--- elements/cl_popup.lua
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\ui\elements\cl_popup.lua
+  CLIENT
+  Custom popup/modal dialog
+---------------------------------------------------------------------------]]
+
 local PANEL = {}
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     local w, h = ScrW(), ScrH()
     self:SetSize(w * 0.3, h * 0.2)
@@ -100,32 +108,59 @@ function PANEL:Init()
     end
 end
 
+-----------------------------------------------------------------------------
+-- Called when closed
+-----------------------------------------------------------------------------
 function PANEL:OnClose()
     -- Override this
     if IsValid(self.Overlay) then self.Overlay:Remove() end
 end
 
+-----------------------------------------------------------------------------
+-- Paint the popup (border/bg)
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     -- fallback background if material missing
     draw.RoundedBox(8, 0, 0, w, h, self.bgColor)
 end
 
 -- Functions to customize
+
+-----------------------------------------------------------------------------
+-- Set header title
+-- @param txt string Title
+-----------------------------------------------------------------------------
 function PANEL:SetHeaderTitle(txt)
     if self.Header then
         self.Header:SetTitle(txt)
     end
 end
 
+-----------------------------------------------------------------------------
+-- Set body text
+-- @param txt string Text
+-----------------------------------------------------------------------------
 function PANEL:SetText(txt)
     self.BodyLabel:SetText(txt)
 end
 
+-----------------------------------------------------------------------------
+-- Set accept button action
+-- @param text string Button label
+-- @param func function Callback
+-----------------------------------------------------------------------------
 function PANEL:SetAcceptButton(text, func)
     self.AcceptButton:SetText(text or "Accept")
     self.OnAccept = func
 end
 
+-----------------------------------------------------------------------------
+-- Set decline button action
+-- @param text string Button label
+-- @param func function Callback
+-----------------------------------------------------------------------------
 function PANEL:SetDeclineButton(text, func)
     self.DeclineButton:SetText(text or "Decline")
     self.OnDecline = func

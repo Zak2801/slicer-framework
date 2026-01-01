@@ -1,3 +1,9 @@
+--[[-------------------------------------------------------------------------
+  lua\zks_slicer_framework\ui\cl_hacking.lua
+  CLIENT
+  Main UI frame for the hacking interface, managing minigame sequence
+---------------------------------------------------------------------------]]
+
 ZKSlicerFramework = ZKSlicerFramework or {}
 ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}
 
@@ -6,6 +12,9 @@ local PANEL = {}
 local w, h = ScrW(), ScrH()
 local mat = Material("vgui/frame.png")
 
+-----------------------------------------------------------------------------
+-- Initialize the panel
+-----------------------------------------------------------------------------
 function PANEL:Init()
     self:SetSize(w / 1.618, h / 1.618)
     self:Center()
@@ -67,6 +76,9 @@ function PANEL:Init()
     end
 end
 
+-----------------------------------------------------------------------------
+-- Think hook for timer updates
+-----------------------------------------------------------------------------
 function PANEL:Think()
     if self.hackTime == 0 then return end
     if not self.TimerStartTime or not self.hackTime then return end
@@ -79,38 +91,64 @@ function PANEL:Think()
     end
 end
 
+-----------------------------------------------------------------------------
+-- Paint the panel background
+-- @param w number Width
+-- @param h number Height
+-----------------------------------------------------------------------------
 function PANEL:Paint(w, h)
     -- fallback background if material missing
     draw.RoundedBox(8, 0, 0, w, h, self.bgColor)
 end
 
+-----------------------------------------------------------------------------
+-- Set the target entity
+-- @param ent Entity
+-----------------------------------------------------------------------------
 function PANEL:SetEntity(ent)
     self.ent = ent
 end
 
+-----------------------------------------------------------------------------
+-- Set the total time allowed for the hack
+-- @param t number Time in seconds
+-----------------------------------------------------------------------------
 function PANEL:SetHackTime(t)
     self.hackTime = math.max(0, t)
     self.TimerStartTime = RealTime()
     self.TimerRemaining = t
 end
 
+-----------------------------------------------------------------------------
+-- Set the list of allowed minigames
+-- @param t table List of strings
+-----------------------------------------------------------------------------
 function PANEL:SetAllowedMinigames(t)
     self.allowedMinigames = t
 end
 
+-----------------------------------------------------------------------------
+-- Set the difficulty level
+-- @param d number Difficulty
+-----------------------------------------------------------------------------
 function PANEL:SetDifficulty(d)
     self.difficulty = d
     self.MinigameCount = math.max(1, d) -- one per difficulty for now
 end
 
--- Instead of SetHackType being the only logic, we’ll split init vs load
+-----------------------------------------------------------------------------
+-- Initialize the hack sequence
+-- @param hackType string (unused legacy param?)
+-----------------------------------------------------------------------------
 function PANEL:SetHackType(hackType)
     self.hackType = hackType
     self.MinigameIndex = 0
     self:StartNextMinigame()
 end
 
--- Called to start the next stage
+-----------------------------------------------------------------------------
+-- Transitions to the next minigame in the sequence
+-----------------------------------------------------------------------------
 function PANEL:StartNextMinigame()
     self.MinigameIndex = self.MinigameIndex + 1
 
@@ -124,6 +162,11 @@ function PANEL:StartNextMinigame()
     self:LoadMinigame(randomMiniGame, self.MinigameIndex)
 end
 
+-----------------------------------------------------------------------------
+-- Loads a specific minigame panel
+-- @param type string Minigame type name (e.g., "cipher")
+-- @param index number Current stage index
+-----------------------------------------------------------------------------
 function PANEL:LoadMinigame(type, index)
     if IsValid(self.Minigame) then
         self.Minigame:Remove()
@@ -131,7 +174,7 @@ function PANEL:LoadMinigame(type, index)
 
     local class = "HackMinigame_" .. type
     local pnl = vgui.Create(class, self.Content)
-    if !IsValid(pnl) then
+    if not IsValid(pnl) then
         ErrorNoHalt("[HACKING] Missing minigame type: " .. type .. "\n")
         self:OnMinigameFailed(index)
         return
@@ -159,18 +202,29 @@ end
 -- CALLBACKS FROM MINIGAMES
 -- =============================
 
+-----------------------------------------------------------------------------
+-- Called when a single minigame stage is passed
+-- @param index number Stage index
+-----------------------------------------------------------------------------
 function PANEL:OnMinigameSuccess(index)
     -- Optional: add a small transition or animation
     chat.AddText(Color(100,255,100), "[HACKING] Stage " .. index .. " complete!")
     self:StartNextMinigame()
 end
 
+-----------------------------------------------------------------------------
+-- Called when a single minigame stage is failed
+-- @param index number Stage index
+-----------------------------------------------------------------------------
 function PANEL:OnMinigameFailed(index)
     chat.AddText(Color(255,100,100), "[HACKING] Stage " .. index .. " failed!")
     -- You can decide if you want to restart or fail the hack entirely:
     self:OnHackFailed()
 end
 
+-----------------------------------------------------------------------------
+-- Called when all stages are successfully completed
+-----------------------------------------------------------------------------
 function PANEL:OnAllMinigamesCompleted()
     chat.AddText(Color(0,255,0), "[HACKING] Hack successful!")
     net.Start(ZKSlicerFramework.NetUtils.HackSuccess)
@@ -179,6 +233,9 @@ function PANEL:OnAllMinigamesCompleted()
     self:Close()
 end
 
+-----------------------------------------------------------------------------
+-- Called when the hack is failed (timer or minigame failure)
+-----------------------------------------------------------------------------
 function PANEL:OnHackFailed()
     net.Start(ZKSlicerFramework.NetUtils.SyncEntHackState)
     net.WriteEntity(self.ent)
