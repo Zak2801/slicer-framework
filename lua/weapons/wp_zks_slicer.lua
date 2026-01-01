@@ -266,6 +266,10 @@ if CLIENT then
 				render.SetMaterial(sprite)
 				render.DrawSprite(drawpos, v.size.x, v.size.y, v.color)
 				
+				if name == "glow" then
+					self.GlowPosVM = drawpos
+				end
+				
 			elseif (v.type == "Quad" and v.draw_func) then
 				
 				local drawpos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
@@ -382,6 +386,10 @@ if CLIENT then
 				local drawpos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
 				render.SetMaterial(sprite)
 				render.DrawSprite(drawpos, v.size.x, v.size.y, v.color)
+				
+				if name == "glow" then
+					self.GlowPosWM = drawpos
+				end
 				
 			elseif (v.type == "Quad" and v.draw_func) then
 				
@@ -591,5 +599,85 @@ if CLIENT then
 		return res
 		
 	end
-	
+
+	local beamMat = Material("slicerframework/physbeam_color")
+
+	local function DrawBeam(startPos, endPos)
+		beamMat:SetFloat("$alpha", .9)
+		beamMat:SetFloat("$hdrcolorscale", .9)
+        beamMat:Recompute()
+		render.SetMaterial(beamMat)
+
+		local t = CurTime()
+		local width  = 2 + math.sin(t * 10) * 0.5
+		local scroll = t * 2
+
+		render.SetColorModulation(1, 0, 0)
+		render.DrawBeam(
+			startPos,
+			endPos,
+			width,
+			scroll,
+			scroll + 2,
+			Color(0, 112, 255, 250)
+		)
+		render.SetColorModulation(1, 1, 1)
+	end
+
+	function SWEP:UpdateBeamTargets()
+		self.BeamTargets = {}
+
+		local ply = LocalPlayer()
+		if not IsValid(ply) then return end
+
+		for _, ent in ipairs(ents.FindInSphere(ply:GetPos(), 300)) do
+			if IsValid(ent)
+				and ent.IsZKSlicerEntity
+				and not ent:GetIsCompleted()
+			then
+				table.insert(self.BeamTargets, ent)
+			end
+		end
+	end
+
+	function SWEP:Think()
+		if not self.NextBeamScan or self.NextBeamScan < CurTime() then
+			self:UpdateBeamTargets()
+			self.NextBeamScan = CurTime() + 0.25
+		end
+	end
+
+	function SWEP:PostDrawViewModel(vm, weapon, ply)
+		if ply ~= LocalPlayer() then return end
+		if ply:GetViewEntity() ~= ply or ply:ShouldDrawLocalPlayer() then return end
+
+		local att = vm:GetAttachment(1)
+		self.FPBeamStart = att and att.Pos or vm:GetPos() + vm:GetForward() * 10
+	end
+
+	hook.Add("PostDrawTranslucentRenderables", "ZKSlicer_DrawBeams", function()
+		local ply = LocalPlayer()
+		local wep = ply:GetActiveWeapon()
+
+		if not IsValid(wep) or wep:GetClass() ~= "wp_zks_slicer" then return end
+		if not wep.BeamTargets then return end
+
+		local startPos
+
+		-- First person
+		if ply:GetViewEntity() == ply and not ply:ShouldDrawLocalPlayer() then
+			-- startPos = wep.FPBeamStart
+			startPos = wep.GlowPosVM
+		else
+			startPos = wep.GlowPosWM
+		end
+
+		if not startPos then return end
+
+		for _, ent in ipairs(wep.BeamTargets) do
+			if IsValid(ent) then
+				DrawBeam(startPos, ent:WorldSpaceCenter())
+			end
+		end
+	end)
 end
