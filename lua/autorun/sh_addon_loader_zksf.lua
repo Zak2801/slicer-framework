@@ -40,6 +40,7 @@ if SERVER then
 		resource.AddSingleFile("materials/entities/sf_controller_entity.png")
 		resource.AddSingleFile("materials/entities/sf_database_entity.png")
 		resource.AddSingleFile("materials/entities/wp_zks_slicer.png")
+		resource.AddSingleFile("materials/icon16/sf.png")
 		resource.AddSingleFile("materials/vgui/zks_slicer.png")
 		resource.AddSingleFile("materials/vgui/datapad.png")
 		resource.AddSingleFile("materials/vgui/hack_arrows/up.png")
