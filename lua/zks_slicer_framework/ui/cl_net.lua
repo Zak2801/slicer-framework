@@ -20,3 +20,17 @@ net.Receive(ZKSlicerFramework.NetUtils.OpenConfigInterface, function()
     if !IsValid(hackableEntity) then return end
     ZKSlicerFramework.UI.OpenConfig(hackableEntity)
 end)
+
+net.Receive(ZKSlicerFramework.NetUtils.Notification, function()
+    local success = net.ReadBool()
+    local ent = net.ReadEntity()
+    local entName = IsValid(ent) and (ent.PrintName or "Unknown") or "Unknown"
+
+    if success then
+        notification.AddLegacy(string.format(language.GetPhrase("zksf.hack.complete"), entName), NOTIFY_GENERIC, 5)
+        surface.PlaySound("buttons/button14.wav")
+    else
+        notification.AddLegacy(string.format(language.GetPhrase("zksf.hack.failed"), entName), NOTIFY_ERROR, 5)
+        surface.PlaySound("buttons/button10.wav")
+    end
+end)

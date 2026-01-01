@@ -12,7 +12,9 @@ function ZKSlicerFramework.LoadDirectory(path)
 		if CLIENT then
 			include(filePath)
 		else
-			if fileName:StartWith("cl_") then
+			if string.find(path, "languages") then
+				AddCSLuaFile(filePath)
+			elseif fileName:StartWith("cl_") then
 				AddCSLuaFile(filePath)
 			elseif fileName:StartWith("sh_") then
 				AddCSLuaFile(filePath)

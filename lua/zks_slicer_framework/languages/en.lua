@@ -1,9 +1,32 @@
-
--- Future support
-
-ZKSlicerFramework = ZKSlicerFramework or {}
-ZKSlicerFramework.Langs = ZKSlicerFramework.Langs or {}
-
-ZKSlicerFramework.Langs["en"] = {
-
+return {
+    ["zksf.status.hackable"] = "HACKABLE",
+    ["zksf.status.available"] = "AVAILABLE",
+    ["zksf.status.hacked"] = "HACKED",
+    ["zksf.status.unavailable"] = "UNAVAILABLE",
+    ["zksf.status.locked"] = "LOCKED",
+    ["zksf.hack.complete"] = "[HACKING] Hack complete on %s",
+    ["zksf.hack.failed"] = "[HACKING] Hack failed on %s",
+    ["zksf.hack.stage_complete"] = "[HACKING] Stage %s complete!",
+    ["zksf.hack.stage_failed"] = "[HACKING] Stage %s failed!",
+    ["zksf.hack.success"] = "[HACKING] Hack successful!",
+    ["zksf.hack.fail_msg"] = "[HACKING] Hack failed.",
+    ["zksf.config.title"] = "Console Configuration",
+    ["zksf.config.tier0"] = "Tier 0",
+    ["zksf.config.tier1"] = "Tier 1",
+    ["zksf.config.tier2"] = "Tier 2",
+    ["zksf.config.tier3"] = "Tier 3",
+    ["zksf.config.difficulty"] = "Difficulty",
+    ["zksf.config.time"] = "Hack Time",
+    ["zksf.config.notimer"] = "(Hack Time of 0 == No Timer)",
+    ["zksf.config.emit_datapad"] = "Emit Datapad",
+    ["zksf.config.save"] = "SAVE CHANGES",
+    ["zksf.config.reset"] = "RESET STATE",
+    ["zksf.ui.hacking_interface"] = "HACKING INTERFACE",
+    ["zksf.minigame.cipher.title"] = "DECODE THE CIPHER",
+    ["zksf.minigame.cipher.shift"] = "CIPHER (Shift %s):",
+    ["zksf.minigame.cipher.decode"] = "DECODE:",
+    ["zksf.minigame.cipher.controls"] = "[ENTER] Submit   |   [BACKSPACE] Delete",
+    ["zksf.minigame.cipher.success"] = "SUCCESS",
+    ["zksf.minigame.cipher.decoded"] = "Cipher decoded!",
+    ["zksf.minigame.cipher.continue"] = "Continue",
 }

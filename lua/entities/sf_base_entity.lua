@@ -67,7 +67,7 @@ if CLIENT then
         cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.08)
 
             draw.SimpleTextOutlined(
-                string.upper("Hackable " .. self:GetEType()),
+                string.upper(language.GetPhrase("zksf.status.hackable") .. " " .. self:GetEType()),
                 "ZKSlicerFramework.UI.Primary",
                 0, 0,
                 Color(255, 255, 255, 255),
@@ -77,16 +77,16 @@ if CLIENT then
                 Color(0, 0, 0, 255)
             )
 
-            local txt = "Available"
+            local txt = language.GetPhrase("zksf.status.available")
             local col = Color(255,100,0)
             if self:GetIsCompleted() then
-                txt = "Hacked"
+                txt = language.GetPhrase("zksf.status.hacked")
                 col = Color(0,255,0)
             elseif self:GetIsBeingHacked() then 
-                txt = "Unavailable" 
+                txt = language.GetPhrase("zksf.status.unavailable")
                 col = Color(255,50,0)
             elseif self:GetIsDisabled() then 
-                txt = "Locked" 
+                txt = language.GetPhrase("zksf.status.locked")
                 col = Color(0,50,250)
             end
 
@@ -176,7 +176,10 @@ if SERVER then
     -----------------------------------------------------------------------------
     function ENT:OnHackSuccess(ply)
         -- Override in derived entities
-        ply:ChatPrint("[HACKING] Hack complete on " .. (self.PrintName or "unknown device"))
+        net.Start(ZKSlicerFramework.NetUtils.Notification)
+        net.WriteBool(true)
+        net.WriteEntity(self)
+        net.Send(ply)
         hook.Run("ZKSF_OnHackSuccess", self, ply)
     end
 
@@ -187,7 +190,10 @@ if SERVER then
     -----------------------------------------------------------------------------
     function ENT:OnHackFailed(ply)
         -- Override in derived entities
-        ply:ChatPrint("[HACKING] Hack failed on " .. (self.PrintName or "unknown device"))
+        net.Start(ZKSlicerFramework.NetUtils.Notification)
+        net.WriteBool(false)
+        net.WriteEntity(self)
+        net.Send(ply)
         hook.Run("ZKSF_OnHackFailed", self, ply)
     end
 

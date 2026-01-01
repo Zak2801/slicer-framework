@@ -178,7 +178,7 @@ function PANEL:Paint(w,h)
 
     local centerY = h * 0.35
 
-    DrawCenteredText("CIPHER (Shift "..self.Shift.."):", "ZKSlicerFramework.UI.PrimarySmall", w/2, centerY - 60, Color(200,200,200))
+    DrawCenteredText(string.format(language.GetPhrase("zksf.minigame.cipher.shift"), self.Shift), "ZKSlicerFramework.UI.PrimarySmall", w/2, centerY - 60, Color(200,200,200))
     DrawCenteredText(string.upper(self.Encoded) or "-----", "ZKSlicerFramework.UI.Primary", w/2, centerY - 20, Color(255,180,50))
 
     DrawCenteredText("DECODE:", "ZKSlicerFramework.UI.PrimarySmall", w/2, centerY + 30, Color(200,200,200))

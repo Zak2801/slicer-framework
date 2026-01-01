@@ -18,7 +18,7 @@ function PANEL:Init()
 
     -- Header
     self.Header = vgui.Create("HackTopBar", self)
-    self.Header:SetTitle("Console Configuration")
+    self.Header:SetTitle(language.GetPhrase("zksf.config.title"))
     self.Header:SetTall(self:GetTall() * 0.1)
     self.Header:SetCloseFunc(function()
         self:Close()
@@ -40,10 +40,10 @@ function PANEL:Init()
     self.Tiers.Paint = nil
 
     local tiers = {
-        { name = "Tier 0", diff = 1, time = 0, color = Color(100, 200, 100) },
-        { name = "Tier 1", diff = 1, time = 30, color = Color(100, 200, 225) },
-        { name = "Tier 2", diff = 3, time = 60, color = Color(225, 200, 100) },
-        { name = "Tier 3", diff = 5, time = 240, color = Color(240, 100, 100) },
+        { name = language.GetPhrase("zksf.config.tier0"), diff = 1, time = 0, color = Color(100, 200, 100) },
+        { name = language.GetPhrase("zksf.config.tier1"), diff = 1, time = 30, color = Color(100, 200, 225) },
+        { name = language.GetPhrase("zksf.config.tier2"), diff = 3, time = 60, color = Color(225, 200, 100) },
+        { name = language.GetPhrase("zksf.config.tier3"), diff = 5, time = 240, color = Color(240, 100, 100) },
     }
 
     self.TierButtons = {}
@@ -70,7 +70,7 @@ function PANEL:Init()
 
     self.Difficulty = vgui.Create("HackNumSlider", self.Content)
     self.Difficulty:Dock(TOP)
-    self.Difficulty:SetText("Difficulty")
+    self.Difficulty:SetText(language.GetPhrase("zksf.config.difficulty"))
     self.Difficulty:SetMin(1)
     self.Difficulty:SetMax(5)
     self.Difficulty:SetDecimals(0)
@@ -78,7 +78,7 @@ function PANEL:Init()
 
     self.HackTime = vgui.Create("HackNumSlider", self.Content)
     self.HackTime:Dock(TOP)
-    self.HackTime:SetText("Hack Time")
+    self.HackTime:SetText(language.GetPhrase("zksf.config.time"))
     self.HackTime:SetMin(0)
     self.HackTime:SetMax(360)
     self.HackTime:SetDecimals(0)
@@ -87,13 +87,13 @@ function PANEL:Init()
     local DLabel = vgui.Create( "DLabel", self.Content )
     DLabel:Dock(TOP)
     DLabel:DockMargin(28, 6, 10, 0)
-    DLabel:SetText( "(Hack Time of 0 == No Timer)" )
+    DLabel:SetText( language.GetPhrase("zksf.config.notimer") )
     DLabel:SetFont( "ZKSlicerFramework.UI.PrimarySmall" )
     
     if IsValid(self.ent) and ent:GetEmitDatapad() ~= nil then
         self.DatapadToggle = vgui.Create("HackCheckbox", self.Content)
         self.DatapadToggle:Dock(TOP)
-        self.DatapadToggle:SetText("Emit Datapad")
+        self.DatapadToggle:SetText(language.GetPhrase("zksf.config.emit_datapad"))
         self.DatapadToggle:DockMargin(18, 12, 10, 0)
         self.DatapadToggle:SetChecked(ent:GetEmitDatapad() == 1)
     end
@@ -103,7 +103,7 @@ function PANEL:Init()
     self.Save:Dock(BOTTOM)
     self.Save:DockMargin(10, 10, 10, 10)
     self.Save:SetTall(self:GetTall() * 0.1)
-    self.Save:SetText("SAVE CHANGES")
+    self.Save:SetText(language.GetPhrase("zksf.config.save"))
     self.Save:SetFont("ZKSlicerFramework.UI.Primary")
     self.Save:SetTextColor(Color(255, 255, 255))
     self.Save.Paint = function(s, w, h)
@@ -131,7 +131,7 @@ function PANEL:Init()
     self.Reset:Dock(BOTTOM)
     self.Reset:DockMargin(10, 10, 10, 10)
     self.Reset:SetTall(self:GetTall() * 0.1)
-    self.Reset:SetText("RESET STATE")
+    self.Reset:SetText(language.GetPhrase("zksf.config.reset"))
     self.Reset:SetFont("ZKSlicerFramework.UI.Primary")
     self.Reset:SetTextColor(Color(255, 255, 255))
     self.Reset.Paint = function(s, w, h)
@@ -162,7 +162,7 @@ function PANEL:SetEntity(ent)
     if succ then
         self.DatapadToggle = vgui.Create("HackCheckbox", self.Content)
         self.DatapadToggle:Dock(TOP)
-        self.DatapadToggle:SetText("Emit Datapad")
+        self.DatapadToggle:SetText(language.GetPhrase("zksf.config.emit_datapad"))
         self.DatapadToggle:DockMargin(18, 12, 10, 0)
         self.DatapadToggle:SetChecked(ent:GetEmitDatapad() == 1)
     end

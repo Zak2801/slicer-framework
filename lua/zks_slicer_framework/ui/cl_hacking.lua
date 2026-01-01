@@ -34,7 +34,7 @@ function PANEL:Init()
     self.accentColor = Color(100, 200, 255)
 
     self.Header = vgui.Create("HackTopBar", self)
-    self.Header:SetTitle("HACKING INTERFACE")
+    self.Header:SetTitle(language.GetPhrase("zksf.ui.hacking_interface"))
     self.Header:SetTall(self:GetTall() * 0.05)
     self.Header:SetCloseFunc(function()
         if self.ent and IsValid(self.ent) then
@@ -217,7 +217,7 @@ end
 -----------------------------------------------------------------------------
 function PANEL:OnMinigameSuccess(index)
     -- Optional: add a small transition or animation
-    chat.AddText(Color(100,255,100), "[HACKING] Stage " .. index .. " complete!")
+    chat.AddText(Color(100,255,100), string.format(language.GetPhrase("zksf.hack.stage_complete"), index))
     self:StartNextMinigame()
 end
 
@@ -226,7 +226,7 @@ end
 -- @param index number Stage index
 -----------------------------------------------------------------------------
 function PANEL:OnMinigameFailed(index)
-    chat.AddText(Color(255,100,100), "[HACKING] Stage " .. index .. " failed!")
+    chat.AddText(Color(255,100,100), string.format(language.GetPhrase("zksf.hack.stage_failed"), index))
     -- You can decide if you want to restart or fail the hack entirely:
     self:OnHackFailed()
 end
@@ -235,7 +235,7 @@ end
 -- Called when all stages are successfully completed
 -----------------------------------------------------------------------------
 function PANEL:OnAllMinigamesCompleted()
-    chat.AddText(Color(0,255,0), "[HACKING] Hack successful!")
+    chat.AddText(Color(0,255,0), language.GetPhrase("zksf.hack.success"))
     net.Start(ZKSlicerFramework.NetUtils.HackSuccess)
     net.WriteEntity(self.ent)
     net.SendToServer()
@@ -250,7 +250,7 @@ function PANEL:OnHackFailed()
     net.WriteEntity(self.ent)
     net.WriteBool(false)
     net.SendToServer()
-    chat.AddText(Color(255,0,0), "[HACKING] Hack failed.")
+    chat.AddText(Color(255,0,0), language.GetPhrase("zksf.hack.fail_msg"))
     self:Close()
 end
 

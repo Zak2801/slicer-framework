@@ -10,6 +10,7 @@ ZKSlicerFramework.NetUtils = {
     HackSuccess = base .. "HackSuccess",
     SyncEntConfig = base .. "SyncEntConfig",
     UpdateDatapadState = base .. "UpdateDatapadState",
+    Notification = base .. "Notification",
 }
 
 if SERVER then
