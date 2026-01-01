@@ -12,6 +12,10 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Category = "ZK's Slicer Framework"
 
+ZKSlicerFramework = ZKSlicerFramework or {}
+ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}
+ZKSlicerFramework.Minigames = ZKSlicerFramework.Minigames or {}
+
 -----------------------------------------------------------------------------
 -- Initialize the entity
 -----------------------------------------------------------------------------
