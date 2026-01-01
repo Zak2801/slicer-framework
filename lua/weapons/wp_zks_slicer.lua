@@ -11,7 +11,7 @@ SWEP.Author = "Zaktak"
 SWEP.Instructions = "Hold in hands to hack systems."
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
-SWEP.Category = "ZK's Slicer Framework"
+SWEP.Category = "[SlicerFramework] - Weapons"
 
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1

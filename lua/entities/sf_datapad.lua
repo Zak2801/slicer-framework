@@ -9,7 +9,7 @@ ENT.PrintName = "Slicer Framework Datapad"
 ENT.Author = "Zaktak"
 ENT.Spawnable = false
 ENT.AdminSpawnable = true
-ENT.Category = "ZK's Slicer Framework"
+ENT.Category = "[SlicerFramework] - Base Entities"
 
 ZKSlicerFramework = ZKSlicerFramework or {}
 ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}

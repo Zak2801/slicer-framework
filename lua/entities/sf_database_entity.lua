@@ -10,7 +10,9 @@ ENT.PrintName = "Hackable Database"
 ENT.Author = "Zaktak"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
-ENT.Category = "ZK's Slicer Framework"
+ENT.Category = "[SlicerFramework] - Base Entities"
+
+DEFINE_BASECLASS("sf_base_entity")
 
 ZKSlicerFramework = ZKSlicerFramework or {}
 ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}
@@ -20,7 +22,7 @@ ZKSlicerFramework.Minigames = ZKSlicerFramework.Minigames or {}
 -- Setup data tables
 -----------------------------------------------------------------------------
 function ENT:SetupDataTables()
-    self.BaseClass.SetupDataTables(self)
+    BaseClass.SetupDataTables(self)
     self:NetworkVar("Int", 2, "EmitDatapad")    -- Datapad to give on success
 end
 
@@ -28,7 +30,7 @@ end
 -- Initialize the entity
 -----------------------------------------------------------------------------
 function ENT:Initialize()
-    self.BaseClass.Initialize(self)
+    BaseClass.Initialize(self)
 
     local mdl = GetConVar("sf_database_model") and GetConVar("sf_database_model"):GetString() or self:GetModel()
     if mdl and mdl ~= "" then
@@ -86,7 +88,7 @@ if SERVER then
         if not self:CanHack(ply) then return end
         
         -- Call base to set state (IsBeingHacked) and HackStartTime
-        self.BaseClass.StartHack(self, ply)
+        BaseClass.StartHack(self, ply)
 
         net.Start(ZKSlicerFramework.NetUtils.OpenHackInterface)
         net.WriteEntity(self)
@@ -112,7 +114,7 @@ if SERVER then
                 ply:ChatPrint("[CONSOLE] You have received a datapad!")
                 
                 -- Call standard base logic (prints success msg and runs global hook)
-                self.BaseClass.OnHackSuccess(self, ply) 
+                BaseClass.OnHackSuccess(self, ply) 
                 
                 -- Additional hook for datapad specifically? 
                 -- or just rely on the global hook. 
@@ -121,7 +123,7 @@ if SERVER then
             end
         end
         
-        self.BaseClass.OnHackSuccess(self, ply)
+        BaseClass.OnHackSuccess(self, ply)
     end
 
     -----------------------------------------------------------------------------
@@ -132,7 +134,7 @@ if SERVER then
         self:SetIsBeingHacked(false)
         self:SetIsCompleted(false)
         
-        self.BaseClass.OnHackFailed(self, ply)
+        BaseClass.OnHackFailed(self, ply)
     end
 
     -----------------------------------------------------------------------------

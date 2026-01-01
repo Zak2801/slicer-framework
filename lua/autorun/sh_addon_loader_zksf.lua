@@ -54,6 +54,11 @@ if SERVER then
 end
 
 if CLIENT then
+	list.Set( "ContentCategoryIcons", "[SlicerFramework]", "icon16/sf.png" )
+	list.Set( "ContentCategoryIcons", "[SlicerFramework] - Base Entities", "icon16/sf.png" )
+	list.Set( "ContentCategoryIcons", "[SlicerFramework] - Premade", "icon16/sf.png" )
+	list.Set( "ContentCategoryIcons", "[SlicerFramework] - Weapons", "icon16/sf.png" )
+
 	surface.CreateFont( "ZKSlicerFramework.UI.Primary", {
 		font = "Sci Fied",
 		size = 32,

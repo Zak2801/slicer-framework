@@ -10,7 +10,9 @@ ENT.PrintName = "Hackable Controller"
 ENT.Author = "Zaktak"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
-ENT.Category = "ZK's Slicer Framework"
+ENT.Category = "[SlicerFramework] - Base Entities"
+
+DEFINE_BASECLASS("sf_base_entity")
 
 ZKSlicerFramework = ZKSlicerFramework or {}
 ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}
@@ -20,7 +22,7 @@ ZKSlicerFramework.Minigames = ZKSlicerFramework.Minigames or {}
 -- Initialize the entity
 -----------------------------------------------------------------------------
 function ENT:Initialize()
-    self.BaseClass.Initialize(self)
+    BaseClass.Initialize(self)
 
     local mdl = GetConVar("sf_controller_model") and GetConVar("sf_controller_model"):GetString() or self:GetModel()
     if mdl and mdl ~= "" then
@@ -88,7 +90,7 @@ if SERVER then
     -----------------------------------------------------------------------------
     function ENT:StartHack(ply)
         if not self:CanHack(ply) then return end
-        self.BaseClass.StartHack(self, ply) -- Call base to set state and time
+        BaseClass.StartHack(self, ply) -- Call base to set state and time
 
         net.Start(ZKSlicerFramework.NetUtils.OpenHackInterface)
         net.WriteEntity(self)

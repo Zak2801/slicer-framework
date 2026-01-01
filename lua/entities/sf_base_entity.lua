@@ -10,7 +10,7 @@ ENT.PrintName = "Base"
 ENT.Author = "Zaktak"
 ENT.Spawnable = false
 ENT.AdminSpawnable = true
-ENT.Category = "ZK's Slicer Framework"
+ENT.Category = "[SlicerFramework] - Base Entities"
 ENT.IsZKSlicerEntity = true
 
 ZKSlicerFramework = ZKSlicerFramework or {}
