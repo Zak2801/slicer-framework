@@ -1,106 +1,47 @@
-# ZK’s Slicer Framework — Advanced Hacking & Interaction System
+# ZK's Slicer Framework
 
-A modular, extensible hacking + interaction system for Garry’s Mod servers.  
-Turn ordinary props and entities into immersive, hackable gameplay elements with configurable difficulty, minigames, and logic linking.
-
-> ⚠ **BETA NOTICE**  
-> This framework is currently in active development. Expect occasional bugs or experimental features.  
-> Please report issues or suggest improvements!
-
----
+A modular, extensible hacking and interaction system for Garry's Mod. Turn ordinary props into immersive gameplay elements with configurable minigames, difficulty scaling, and logic linking.
 
 ## ✨ Features
 
-### 🔐 Hackable Entities
-
-- Supports multiple hacking minigames
-- Difficulty scaling (tiers + manual tuning)
-- Adjustable timers and dynamic challenge options
-- Planned: additional minigames and expanded logic
-
-### 🛠️ Admin Configuration Panel
-
-- Configure hacking difficulty and time per entity
-- Choose Tier 1–3 presets or fine-tune manually
-- Change entity model directly via the **Q-menu → Options** panel
-
-### 🔗 Link Tool
-
-- Create logic connections between controllers and target props
-- Visualize existing links in real time
-- Remove or reassign connections instantly
-
-### 🎨 Custom VGUI System
-
-- Themed UI for hacking minigames and configuration
-- Clean, expandable panel structure
-
-### 🧩 Modular Design
-
-- Built to integrate with:
-  - StarWarsRP
-  - DarkRP
-  - Sandbox
-  - Custom gamemodes
-- Easy to extend with custom hackable entities or minigames
-
----
-
-## 🧰 Included Tools
-
-- **Hackable Link Toolgun** — connect controllers to entities
-- **Entity Config Tool** — adjust hacking parameters & difficulty
-- **Hacking Interface** — immersive minigame popup
-
----
-
-## 🎮 Use Cases
-
-- Create mission objectives requiring hacking
-- Add interactive gameplay depth to RP, PvE, or event systems
-- Tie hacking into puzzles, doors, consoles, and scripted sequences
-- Build full hacking-based progression systems
-
----
+- **Hackable Entities:** Pre-configured entities like Datapads, Controllers, and Databases.
+- **Minigame System:** Includes immersive hacking minigames (e.g., Cipher) with difficulty scaling.
+- **Admin Configuration:** In-game configuration panel for every entity. Adjust hack time, difficulty, and visual models on the fly.
+- **Logic Linking:** Use the **Hackable Link Tool** to connect "Controller" entities to other objects (like doors or lights) to trigger actions upon a successful hack.
+- **Developer Friendly:** Easy to extend with new entities and custom minigames using a standardized API.
 
 ## 📦 Installation
 
-1. Place the addon into `garrysmod/addons/`
-2. Restart the server
-3. Configure models, permissions, and defaults:
-   - **Q-Menu → Options → ZK’s Slicer Framework**
+1.  Download the addon.
+2.  Extract the `zks_slicer_framework` folder into your server's `garrysmod/addons/` directory.
+3.  Restart the server.
 
----
+## 🎮 Usage
 
-## 📝 Developer Information
+### For Players
 
-Developers can:
+1.  Equip the **Slicer** weapon (found under Weapons > ZK's Slicer Framework).
+2.  Approach a hackable entity (e.g., a Datapad or Database).
+3.  Press **Primary Fire** (Left Click) or **Use** (E) to begin the hack.
+4.  Complete the minigame before the timer runs out.
 
-- Create new hackable entity types
-- Extend the hacking UI and minigames
-- Use hooks to react to:
-  - OnHackStart
-  - OnHackSuccess
-  - OnHackFailed
-  - OnLinkCreated / OnLinkRemoved
+### For Admins
 
-Documentation is available inside the **docs/** folder.
+- **Configuration:** Press `Use` (Without the "Slicer" in hand) on any Slicer Framework entity to open the configuration menu. You can change the difficulty, hack duration, and even the entity's model (via Q menu).
+- **Linking:** Use the **Hackable Link Tool** (Tools > ZK's Slicer Framework) to connect a Controller entity to a target.
+  1.  Left-click the **Controller**.
+  2.  Left-click the **Target** (e.g., a fading door button or light).
+  3.  When the Controller is hacked, it will interact with the Target.
 
----
+## 🛠️ Developer Documentation
+
+Full developer documentation, including how to create custom entities and register new minigames, can be found in [docs/DEVELOPER_API.md](docs/DEVELOPER_API.md).
 
 ## 📄 License
 
-This project uses a **Custom Server-Use License**:
+This project is licensed for use on your own servers.
 
-- ✔ You **may modify** the addon to use on your own server
-- ❌ You **may NOT redistribute** modified versions
-- ✔ You may share unmodified versions (linking to the original repo/workshop)
+- **You may:** Modify the code for your specific server needs.
+- **You may not:** Redistribute this addon or modified versions of it as your own work.
 
-See **LICENSE.txt** for full terms.
-
----
-
-## 🤝 Contributing
-
-Bug reports, feature suggestions, and improvements are welcome.  
-Please open an issue or contact me directly.
+See `LICENSE.txt` for details.
