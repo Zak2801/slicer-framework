@@ -166,3 +166,9 @@ function PANEL:Paint(w, h)
 end
 
 vgui.Register("HackMinigame_frequency", PANEL, "DPanel")
+
+ZKSlicerFramework.Minigames.Register("frequency", {
+    Name = "Signal Frequency",
+    Description = "Align the signal waves.",
+    PanelClass = "HackMinigame_frequency"
+})

@@ -15,12 +15,8 @@ ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}
 -- @return boolean Returns true if valid and is a framework entity
 -----------------------------------------------------------------------------
 local function checkEntityFramework(ent)
-    if IsValid(ent) then
-        if ent.BaseClass then
-             if ent.BaseClass.ClassName == "sf_base_entity" then
-                return true
-             end
-        end
+    if IsValid(ent) and ent.IsZKSlicerEntity then
+        return true
     end
     return false
 end

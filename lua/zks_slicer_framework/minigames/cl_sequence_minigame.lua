@@ -268,3 +268,9 @@ function PANEL:Paint(w, h)
 end
 
 vgui.Register("HackMinigame_sequence", PANEL, "DPanel")
+
+ZKSlicerFramework.Minigames.Register("sequence", {
+    Name = "Sequence Pattern",
+    Description = "Follow the arrow pattern.",
+    PanelClass = "HackMinigame_sequence"
+})

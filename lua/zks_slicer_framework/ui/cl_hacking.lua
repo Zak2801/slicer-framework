@@ -173,6 +173,15 @@ function PANEL:LoadMinigame(type, index)
     end
 
     local class = "HackMinigame_" .. type
+    
+    -- Try to look up in registry
+    if ZKSlicerFramework.Minigames then
+        local data = ZKSlicerFramework.Minigames.Get(type)
+        if data and data.PanelClass then
+            class = data.PanelClass
+        end
+    end
+
     local pnl = vgui.Create(class, self.Content)
     if not IsValid(pnl) then
         ErrorNoHalt("[HACKING] Missing minigame type: " .. type .. "\n")

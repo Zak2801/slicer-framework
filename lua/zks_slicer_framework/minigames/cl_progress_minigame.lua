@@ -68,4 +68,11 @@ function PANEL:Paint(w, h)
     end
 end
 
+-- This is just an example minigame
 vgui.Register("HackMinigame_progress", PANEL, "DPanel")
+
+-- ZKSlicerFramework.Minigames.Register("progress", {
+--     Name = "Data Extraction",
+--     Description = "Wait for the hack to complete.",
+--     PanelClass = "HackMinigame_progress"
+-- })

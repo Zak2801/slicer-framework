@@ -31,7 +31,11 @@ function ENT:Initialize()
         self:SetModel("models/props/de_prodigy/desk_console3.mdl")
     end
 
-    local minigames = util.TableToJSON({"cipher", "sequence", "frequency"})
+    local keys = ZKSlicerFramework.Minigames.GetKeys()
+    -- Default fallback if registry is empty for some reason
+    if #keys == 0 then keys = {"cipher", "sequence", "frequency"} end
+    
+    local minigames = util.TableToJSON(keys)
     self:SetAllowedMinigames(minigames)
     self:SetDifficulty(1)
     self:SetEType("Controller")

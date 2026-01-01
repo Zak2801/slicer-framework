@@ -195,3 +195,9 @@ function PANEL:Paint(w,h)
 end
 
 vgui.Register("HackMinigame_cipher", PANEL, "DPanel")
+
+ZKSlicerFramework.Minigames.Register("cipher", {
+    Name = "Cipher Decode",
+    Description = "Decode the shifted text.",
+    PanelClass = "HackMinigame_cipher"
+})

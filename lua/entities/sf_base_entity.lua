@@ -11,6 +11,7 @@ ENT.Author = "Zaktak"
 ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ENT.Category = "ZK's Slicer Framework"
+ENT.IsZKSlicerEntity = true
 
 ZKSlicerFramework = ZKSlicerFramework or {}
 
@@ -165,6 +166,7 @@ if SERVER then
         if not self:CanHack(ply) then return end
         self:SetIsBeingHacked(true)
         self.HackStartTime = CurTime()
+        hook.Run("ZKSF_OnStartHack", self, ply)
     end
 
     -----------------------------------------------------------------------------
@@ -175,6 +177,7 @@ if SERVER then
     function ENT:OnHackSuccess(ply)
         -- Override in derived entities
         ply:ChatPrint("[HACKING] Hack complete on " .. (self.PrintName or "unknown device"))
+        hook.Run("ZKSF_OnHackSuccess", self, ply)
     end
 
     -----------------------------------------------------------------------------
@@ -185,6 +188,7 @@ if SERVER then
     function ENT:OnHackFailed(ply)
         -- Override in derived entities
         ply:ChatPrint("[HACKING] Hack failed on " .. (self.PrintName or "unknown device"))
+        hook.Run("ZKSF_OnHackFailed", self, ply)
     end
 
     -- Admin config (basic)
