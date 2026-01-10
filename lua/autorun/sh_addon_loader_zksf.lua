@@ -12,7 +12,7 @@ function ZKSlicerFramework:GetVersion()
 end
 
 function ZKSlicerFramework:CheckUpdates()
-	http.Fetch("https://raw.githubusercontent.com/Zak2801/slicer-framework/b44c6d040a001c62a16a1361d279e7915b934ca5/lua/autorun/sh_addon_loader_zksf.lua", function(contents,size) 
+	http.Fetch("https://raw.githubusercontent.com/Zak2801/slicer-framework/refs/heads/main/lua/autorun/sh_addon_loader_zksf.lua", function(contents,size) 
 		local Entry = string.match( contents, "ZKSlicerFramework.VERSION%s=%s%d+" )
 
 		if Entry then
