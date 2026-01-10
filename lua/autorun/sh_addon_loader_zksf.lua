@@ -3,7 +3,7 @@
 ---------------------------------------------------------------
 ZKSlicerFramework = ZKSlicerFramework or {}
 
-ZKSlicerFramework.VERSION = 1
+ZKSlicerFramework.VERSION = 2
 ZKSlicerFramework.VERSION_GITHUB = 0
 ZKSlicerFramework.VERSION_TYPE = ".GIT"
 

@@ -127,6 +127,8 @@ if SERVER then
         self:SetIsCompleted(true)
         local linkedEnts = GetLinkedEntities(self)
         local remaining = #linkedEnts
+        print("Hack success!!")
+        PrintTable(linkedEnts)
 
         hook.Run("ZKSF_HackSuccess", self, ply, linkedEnts)
 
@@ -139,7 +141,7 @@ if SERVER then
                 local id = ent:GetCreationID()
                 if toFind[id] then
                     if IsValid(ent) then
-                        if ent.BaseClass and ent.BaseClass.ClassName == "sf_base_entity" then
+                        if ZKSlicerFramework.IsSlicerEntity(ent) then
                             ent:SetIsDisabled(false)
                         else
                             ent:Remove()

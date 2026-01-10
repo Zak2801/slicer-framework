@@ -10,18 +10,6 @@ ZKSlicerFramework = ZKSlicerFramework or {}
 ZKSlicerFramework.NetUtils = ZKSlicerFramework.NetUtils or {}
 
 -----------------------------------------------------------------------------
--- Helper function to validate if an entity belongs to the framework
--- @param ent Entity The entity to validate
--- @return boolean Returns true if valid and is a framework entity
------------------------------------------------------------------------------
-local function checkEntityFramework(ent)
-    if IsValid(ent) and ent.IsZKSlicerEntity then
-        return true
-    end
-    return false
-end
-
------------------------------------------------------------------------------
 -- Called from client to sync the state of IsBeingHacked
 -- @param len number Length of the message (unused)
 -- @param ply Player The player sending the message
@@ -30,7 +18,7 @@ end
 net.Receive(ZKSlicerFramework.NetUtils.SyncEntHackState, function(_, ply)
     local ent = net.ReadEntity()
     if not ent then return end
-    if not checkEntityFramework(ent) then return end
+    if not ZKSlicerFramework.IsSlicerEntity(ent) then return end
 
     -- Distance check (approx 200 units)
     if ent:GetPos():DistToSqr(ply:GetPos()) > 40000 then return end
@@ -53,7 +41,7 @@ end)
 net.Receive(ZKSlicerFramework.NetUtils.HackSuccess, function(_, ply)
     local ent = net.ReadEntity()
     if not ent then return end
-    if not checkEntityFramework(ent) then return end
+    if not ZKSlicerFramework.IsSlicerEntity(ent) then return end
 
     -- 1. Distance check
     if ent:GetPos():DistToSqr(ply:GetPos()) > 40000 then return end
@@ -62,10 +50,14 @@ net.Receive(ZKSlicerFramework.NetUtils.HackSuccess, function(_, ply)
     local wep = ply:GetActiveWeapon()
     if not IsValid(wep) or wep:GetClass() ~= "wp_zks_slicer" then return end
 
-    -- 3. Timing check (prevent instant hack)
-    local minTime = ent:GetHackTime()
+    -- 3. Timing check (prevent instant hack or over the max hack)
     local startTime = ent.HackStartTime or 0
-    if CurTime() - startTime < minTime then return end
+    if CurTime() - startTime < 1.2 then return end
+
+    local maxTime = ent:GetHackTime()
+    if maxTime and maxTime > 0 then
+        if CurTime() - startTime > maxTime + 1 then return end
+    end
     
     ent:OnHackSuccess(ply)
 end)
@@ -79,7 +71,7 @@ end)
 net.Receive(ZKSlicerFramework.NetUtils.SyncEntConfig, function(_, ply)
     local ent = net.ReadEntity()
     if not ent then return end
-    if not checkEntityFramework(ent) then return end
+    if not ZKSlicerFramework.IsSlicerEntity(ent) then return end
 
     -- Permission check
     if not ZKSlicerFramework.CanConfigure(ply) then return end

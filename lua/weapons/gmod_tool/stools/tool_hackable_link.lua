@@ -32,8 +32,7 @@ local MAX_JSON_LEN = 512
 -- Helper functions
 -- =====================================================================================
 local function IsController(ent)
-    if not IsValid(ent) then return false end
-    return ent.BaseClass and ent.BaseClass.ClassName == "sf_base_entity"
+    return ZKSlicerFramework.IsController(ent)
 end
 
 local function GetLinkedEntities(ent)
@@ -129,7 +128,7 @@ function TOOL:RightClick(trace)
 
     if idx then
         -- unlink
-        if IsController(ent) then
+        if ZKSlicerFramework.IsSlicerEntity(ent) then
             ent:SetIsDisabled(false)
         end
         table.remove(linked, idx)
@@ -139,7 +138,7 @@ function TOOL:RightClick(trace)
         end
     else
         -- link
-        if IsController(ent) then
+        if ZKSlicerFramework.IsSlicerEntity(ent) then
             ent:SetIsDisabled(true)
         end
         table.insert(linked, ent:GetCreationID())

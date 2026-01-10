@@ -82,7 +82,7 @@ function SWEP:PrimaryAttack()
     
     if SERVER then
         local tr = self.Owner:GetEyeTrace()
-        if IsValid(tr.Entity) and tr.Entity.BaseClass and tr.Entity.BaseClass.ClassName == "sf_base_entity" then
+        if ZKSlicerFramework.IsSlicerEntity(tr.Entity) then
              self:EmitSound("buttons/button14.wav")
         else
              self:EmitSound("buttons/button16.wav")
