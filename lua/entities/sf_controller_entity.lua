@@ -127,8 +127,6 @@ if SERVER then
         self:SetIsCompleted(true)
         local linkedEnts = GetLinkedEntities(self)
         local remaining = #linkedEnts
-        print("Hack success!!")
-        PrintTable(linkedEnts)
 
         hook.Run("ZKSF_HackSuccess", self, ply, linkedEnts)
 
